@@ -17,7 +17,7 @@ import java.util.Map;
 public class FilmController {
     private Map<Integer, Film> films = new HashMap<>();
     private final LocalDate movieBirthday = LocalDate.parse("28.12.1985");
-    private final Integer MAXLENGTHDESCR = 200;
+    private final Integer maxlengthdescr = 200;
 
     @GetMapping
     public Collection<Film> findAll() {
@@ -31,7 +31,7 @@ public class FilmController {
             throw new ValidationException("У фильма должно быть название!");
         }
 
-        if (film.getDescription().length() > MAXLENGTHDESCR) {
+        if (film.getDescription().length() > maxlengthdescr) {
             log.warn("Ошибка при добавлении фильма, слишком длинное описание");
             throw new ValidationException("Длина описания больше максимально допустимой(200 символов)");
         }
