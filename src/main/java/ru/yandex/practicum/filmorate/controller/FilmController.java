@@ -16,8 +16,6 @@ import java.util.Map;
 @Slf4j
 public class FilmController {
     private Map<Integer, Film> films = new HashMap<>();
-    private final LocalDate movieBirthday = LocalDate.parse("28.12.1985");
-    private final Integer maxlengthdescr = 200;
 
     @GetMapping
     public Collection<Film> findAll() {
@@ -31,25 +29,24 @@ public class FilmController {
             throw new ValidationException("У фильма должно быть название!");
         }
 
-        if (film.getDescription().length() > maxlengthdescr) {
+        if (film.getDescription().length() > 200) {
             log.warn("Ошибка при добавлении фильма, слишком длинное описание");
             throw new ValidationException("Длина описания больше максимально допустимой(200 символов)");
         }
 
-        if (film.getReleaseDate().isBefore(movieBirthday)) {
+        if (film.getReleaseDate().isBefore(LocalDate.parse("28.12.1895"))) {
             log.warn("Ошибка при добавлении фильма, дата релиза = {}", film.getReleaseDate());
-            throw new ValidationException("Дата релиза фильма не может быть раньше " + movieBirthday);
+            throw new ValidationException("Дата релиза фильма не может быть раньше 28.12.1895");
         }
 
-        if (!durationCheck(film.getDuration())) {
+        if (!(durationCheck(film.getDuration()))) {
             log.warn("Ошибка при добавлении фильма, длительность = {}", film.getDuration());
             throw new ValidationException("Длительность должна быть больше 0");
         }
 
         film.setId(getNextId());
-        log.trace("Установлен id фильма");
         films.put(film.getId(), film);
-        log.info("Фильм добавлен");
+
         return film;
     }
 
@@ -61,27 +58,23 @@ public class FilmController {
         }
 
         if (films.containsKey(newFilm.getId())) {
-            log.trace("фильм с id = {} найден", newFilm.getId());
             Film oldFilm = films.get(newFilm.getId());
-            if (newFilm.getName() != null) {
+            if (newFilm.getName() != null && !(newFilm.getName().isBlank())) {
                 oldFilm.setName(newFilm.getName());
-                log.trace("Обновлено название фильма");
             }
 
             if (newFilm.getDescription() != null && !(newFilm.getDescription().isBlank())) {
                 oldFilm.setDescription(newFilm.getDescription());
-                log.trace("Обновлено описание филма");
             }
 
             if (newFilm.getReleaseDate() != null) {
                 oldFilm.setReleaseDate(newFilm.getReleaseDate());
-                log.trace("Обновлена дата релтиза фильма");
             }
 
             if (newFilm.getDuration() != null && durationCheck(newFilm.getDuration())) {
                 oldFilm.setDuration(newFilm.getDuration());
-                log.trace("Обновлена длительность фильма");
             }
+            return oldFilm;
         }
 
         log.warn("Ошибка при обновлении данных фильма, указан неверный id");
