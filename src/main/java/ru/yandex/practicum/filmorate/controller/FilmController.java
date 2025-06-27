@@ -17,7 +17,7 @@ import java.util.Map;
 public class FilmController {
     private Map<Integer, Film> films = new HashMap<>();
     private final LocalDate movieBirthday = LocalDate.parse("28.12.1985");
-    private final static Integer MAXLENGTHDESCR = 200;
+    private final Integer MAXLENGTHDESCR = 200;
 
     @GetMapping
     public Collection<Film> findAll() {
